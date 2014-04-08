@@ -34,8 +34,6 @@ def search(request):
         except TwythonError as e:
             return {"exception happened :)": e}
         else:
-            #import ipdb;ipdb.set_trace()
-            print len(search_tweets)
             for tweet in search_tweets:
                 try:
                     search_results.append(parser.parse(tweet['text']))
@@ -49,8 +47,6 @@ def search(request):
     #latest_tweet['text'] = parser.parse(latest_tweet['text']).html
     #cache.set('latest_tweet', latest_tweet, settings.TWITTER_TIMEOUT)
     template_dict = {'search_results': search_results}
-    #import ipdb;ipdb.set_trace()
-    #print 'search_results', search_results
     return render(request, "search.html", template_dict)
 
 
