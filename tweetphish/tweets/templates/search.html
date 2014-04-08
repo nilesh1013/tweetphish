@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+<!-- Custom styles for this template -->
+
+{% block content %}
+    {% for tweet in search_results %}
+        <div class={% if tweet.urls %}"urltweet"{% else %}"tweet"{% endif %}>
+            {% autoescape off %}{{ tweet.html }}{% endautoescape %}<br><br>
+            <!--list: {{ tweet.lists }}-->
+            <!--reply: {{ tweet.reply }}s-->
+            <!--tags: {{ tweet.tags }}-->
+            <!--urls: {{ tweet.urls }}-->
+            <!--users: {{ tweet.users }}<br><br>-->
+        </div>
+    {% endfor %}
+{% endblock %}
