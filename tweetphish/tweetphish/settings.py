@@ -36,7 +36,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tweets'
+    'tweets',
+    'endless_pagination'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -109,4 +110,5 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 "django.core.context_processors.static",
 "django.core.context_processors.tz",
 "django.contrib.messages.context_processors.messages",
-"tweetphish.custom_context.latest_tweet")
+"tweetphish.custom_context.latest_tweet",
+"django.core.context_processors.request")

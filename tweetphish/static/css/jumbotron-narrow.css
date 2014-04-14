@@ -13,12 +13,41 @@ body {
 }
 
 .urltweet {
-  border-color:#2B2121;
-  border-style:double;
-}
+  display: inline-block;
+  padding: 16px;
+  margin: 10px 0;
+  max-width: 468px;
+
+  border: #ddd 1px solid;
+  border-top-color: #eee;
+  border-bottom-color: #bbb;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+
+  font: bold 14px/18px Helvetica, Arial, sans-serif;
+  color: #000;
+  background: ghostwhite;}
+
+.tweet {
+  display: inline-block;
+  padding: 16px;
+  margin: 10px 0;
+  max-width: 468px;
+
+  border: #ddd 1px solid;
+  border-top-color: #eee;
+  border-bottom-color: #bbb;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+
+  font: bold 14px/18px Helvetica, Arial, sans-serif;
+  color: #000;
+  background: cornsilk;}
+
 .phishurl {
   background-color: red;
 }
+
 .goodurl {
   background-color: yellow;
   display: inline-block;
