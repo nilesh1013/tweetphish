@@ -1,0 +1,11 @@
+Django==1.6.2
+argparse==1.2.1
+distribute==0.6.24
+ipdb==0.8
+ipython==2.0.0
+oauthlib==0.6.1
+phishtank==1.0.1
+requests==2.1.0
+requests-oauthlib==0.4.0
+twython==3.1.2
+wsgiref==0.1.2
