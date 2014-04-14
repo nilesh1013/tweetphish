@@ -30,59 +30,57 @@ def check_phish(url):
     """
     checking url is phishing or not
     """
+    long_url_json = requests.get('http://api.longurl.org/v2/expand?url=%s&format=json' % url)
+
     try:
-        url = url[0]
-    except IndexError:
+        json_data = json.loads(long_url_json.content)
+        url = json_data['long_url']
+    except:
         pass
+
+    phish_url = None
+
+    try:
+        phishtank_api = phishtank.Phishtank()
+        phish_url = phishtank_api.check(url).unsafe
+    except:
+        pass
+
+    if phish_url:
+        phish_url = 'Phishtank detection'
     else:
-        phish_url = None
+        mywot_result = requests.get(MYWOT_API_URL % (url, MYWOT_API_KEY))
 
         try:
-            phishtank_api = phishtank.Phishtank()
-            phish_url = phishtank_api.check(url).unsafe
+            json_data = json.loads(mywot_result.content)
         except:
             pass
-
-        if phish_url:
-            phish_url = 'Phishtank detection'
         else:
-            mywot_result = requests.get(MYWOT_API_URL % (url, MYWOT_API_KEY))
-
             try:
-                json_data = json.loads(mywot_result.content)
+                url_data = json_data[url]
             except:
                 pass
             else:
-                try:
-                    url_data = json_data[url]
-                except:
-                    pass
+                if "blacklists" in url_data:
+                    phish_url="MyWot detection"
                 else:
-                    if "blacklists" in url_data:
-                        phish_url="MyWot detection"
+                    try:
+                        url_code_category = url_data['categories'].keys()
+                    except (KeyError, AttributeError):
+                        pass
                     else:
-                        try:
-                            url_code_category = url_data['categories'].keys()
-                        except (KeyError, AttributeError):
-                            pass
-                        else:
-                            for category_code in url_code_category:
-                                if category_code in MYWOT_CATEGORIES:
-                                    phish_url = "MyWot detection"
-                                    break
+                        for category_code in url_code_category:
+                            if category_code in MYWOT_CATEGORIES:
+                                phish_url = "MyWot detection"
+                                break
 
-        if not phish_url:
-            try:
-                google_safe_result = requests.get(GOOGLE_SAFE_BROWSING_URL % (GOOGLE_SAFE_BROWSING_KEY, url)).text
-            except:
-                google_safe_result = None
+    if not phish_url:
+        try:
+            google_safe_result = requests.get(GOOGLE_SAFE_BROWSING_URL % (GOOGLE_SAFE_BROWSING_KEY, url)).text
+        except:
+            google_safe_result = None
 
-            if google_safe_result in ('malware', 'phishing'):
-                phish_url = 'googlesafebrowsing detection'
+        if google_safe_result in ('malware', 'phishing'):
+            phish_url = 'googlesafebrowsing detection'
 
-        return phish_url
-
-
-
-
-
+    return phish_url

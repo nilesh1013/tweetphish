@@ -13,7 +13,15 @@ body {
 }
 
 .urltweet {
-  background-color:#c0deed;
+  border-color:#2B2121;
+  border-style:double;
+}
+.phishurl {
+  background-color: red;
+}
+.goodurl {
+  background-color: yellow;
+  display: inline-block;
 }
 
 /* Custom page header */

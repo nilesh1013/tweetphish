@@ -22,7 +22,7 @@ def search(request):
                       settings.TWITTER_OAUTH_TOKEN_SECRET)
     if query_param:
         try:
-            search_tweets = twitter.search(q=query_param, lang="en", count="50")
+            search_tweets = twitter.search(q=query_param, lang="en", count="20")
         except TwythonError as e:
             return {"exception happened :)": e}
         else:
@@ -30,7 +30,7 @@ def search(request):
                 search_results.append(parser.parse(tweet['text']))
     elif user_name:
         try:
-            search_tweets = twitter.get_user_timeline(screen_name=user_name , count="50")
+            search_tweets = twitter.get_user_timeline(screen_name=user_name , count="20")
         except TwythonError as e:
             return {"exception happened :)": e}
         else:
