@@ -1,0 +1,19 @@
+{% load endless %}
+
+{% load check_phish %}
+{% load short_to_long %}
+
+{% paginate search_results %}
+{% for tweet in search_results %}
+    <div class={% if tweet.urls %}"tweet"{% else %}"urltweet"{% endif %}>
+        {% autoescape off %}{{ tweet.html }}{% endautoescape %}<br><br>
+        <!--list: {{ tweet.lists }}-->
+        <!--reply: {{ tweet.reply }}s-->
+        <!--tags: {{ tweet.tags }}-->
+        {% for url in tweet.urls %}
+            <div class={% if url|check_phish %}"phishurl"{% else %}"goodurl"{% endif %}>{{ url|short_to_long }}</div>
+        {% endfor %}
+        <!--users: {{ tweet.users }}<br><br>-->
+    </div>
+{% endfor %}
+{% show_more %}

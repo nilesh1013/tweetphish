@@ -4,13 +4,14 @@ from django.core.cache import cache
 
 from twython import Twython, TwythonError
 from tweetphish.utils.twitter_parser import Parser
+from endless_pagination.decorators import page_template
 
-def search(request):
+@page_template('entry_index_page.html')
+def search(request, extra_context=None):
     """
         Gets latest tweet from the Twitter user specified in settings.
         Caches latest tweet for 10 minutes to reduce API calls
     """
-    #import ipdb;ipdb.set_trace()
     query_param = request.GET.get('query')
     user_name = request.GET.get('user')
     parser = Parser()
@@ -30,7 +31,7 @@ def search(request):
                 search_results.append(parser.parse(tweet['text']))
     elif user_name:
         try:
-            search_tweets = twitter.get_user_timeline(screen_name=user_name , count="50")
+            search_tweets = twitter.get_user_timeline(screen_name=user_name , count="20")
         except TwythonError as e:
             return {"exception happened :)": e}
         else:
@@ -39,15 +40,15 @@ def search(request):
                     search_results.append(parser.parse(tweet['text']))
                 except:
                     pass
-
-
-    #for tweet in search_tweets['statuses']:
-    #   search_results.append(parser.parse(tweet['text']))
-    ##latest_tweet = user_timeline[0]
-    #latest_tweet['text'] = parser.parse(latest_tweet['text']).html
+    page_template= "entry_index_page.html"
+    template = "search.html"
     #cache.set('latest_tweet', latest_tweet, settings.TWITTER_TIMEOUT)
-    template_dict = {'search_results': search_results}
-    return render(request, "search.html", template_dict)
+    if request.is_ajax():
+        template = page_template
+    template_dict = {"search_results": search_results, "page_template": page_template}
+    if extra_context:
+        template_dict.update({'extra_context': extra_context})
+    return render(request, template, template_dict)
 
 
 # Create your views here.
