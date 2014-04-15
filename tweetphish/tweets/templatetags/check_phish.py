@@ -1,4 +1,5 @@
 from django import template
+from urlparse import urlparse
 import requests
 import json
 import phishtank
@@ -6,18 +7,18 @@ import phishtank
 register = template.Library()
 
 MYWOT_CATEGORIES = {
-    101: 'Malware or viruses',
-    102: 'Poor customer experience',
-    103: 'Phishing',
-    104: 'Scam',
-    105: 'Potentially illegal',
-    201: 'Misleading claims or unethical',
-    202: 'Privacy risks',
-    203: 'Suspicious',
-    204: 'Hate, discrimination',
-    205: 'Spam',
-    206: 'Potentially unwanted programs',
-    207: 'Ads / pop-ups'
+    '101': 'Malware or viruses',
+    '102': 'Poor customer experience',
+    '103': 'Phishing',
+    '104': 'Scam',
+    '105': 'Potentially illegal',
+    '201': 'Misleading claims or unethical',
+    '202': 'Privacy risks',
+    '203': 'Suspicious',
+    '204': 'Hate, discrimination',
+    '205': 'Spam',
+    '206': 'Potentially unwanted programs',
+    '207': 'Ads / pop-ups'
 }
 
 MYWOT_API_KEY = 'ba90e1b5fe8ec144048e63c38b2ea18f4fc93776'
@@ -34,7 +35,7 @@ def check_phish(url):
 
     try:
         json_data = json.loads(long_url_json.content)
-        url = json_data['long_url']
+        url = json_data['long-url']
     except:
         pass
 
@@ -57,7 +58,8 @@ def check_phish(url):
             pass
         else:
             try:
-                url_data = json_data[url]
+                url_netloc = urlparse(url).netloc
+                url_data = json_data[url_netloc]
             except:
                 pass
             else:
@@ -83,4 +85,5 @@ def check_phish(url):
         if google_safe_result in ('malware', 'phishing'):
             phish_url = 'googlesafebrowsing detection'
 
-    return phish_url
+    if phish_url:
+        return True

@@ -66,15 +66,39 @@ body {
   font-style: oblique
  }
 
-.phishurl {
-  background-color: red;
-}
+.phish_url {
+  display: block;
+  padding: 16px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 700px;
 
-.goodurl {
-  background-color: yellow;
-  display: inline-block;
-}
+  border: #ddd 3px solid;
+  border-top-color: #eee;
+  border-bottom-color: #bbb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 
+  font: bold 14px/18px Helvetica, Arial, sans-serif;
+  color: #000;
+  background: #ff0011;}
+
+.good_url {
+  display: block;
+  padding: 16px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 700px;
+
+  border: #ddd 3px solid;
+  border-top-color: #eee;
+  border-bottom-color: #bbb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+
+  font: bold 14px/18px Helvetica, Arial, sans-serif;
+  color: #000;
+  background: lightseagreen;}
 /* Custom page header */
 .header {
   border-bottom: 1px solid #e5e5e5;
