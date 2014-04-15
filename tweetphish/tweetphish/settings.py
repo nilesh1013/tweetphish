@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'endless_pagination',
-    'tweets',
+    'tweets'
 )
 
 MIDDLEWARE_CLASSES = (

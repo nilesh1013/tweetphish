@@ -1,13 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.conf import settings
 from django.core.cache import cache
+from django.template import RequestContext
 
 from twython import Twython, TwythonError
 from tweetphish.utils.twitter_parser import Parser
 from endless_pagination.decorators import page_template
 
 @page_template('entry_index_page.html')
-def search(request, extra_context=None):
+def search(request, template = "search.html", extra_context=None):
     """
         Gets latest tweet from the Twitter user specified in settings.
         Caches latest tweet for 10 minutes to reduce API calls
@@ -41,14 +42,14 @@ def search(request, extra_context=None):
                 except:
                     pass
     page_template= "entry_index_page.html"
-    template = "search.html"
     #cache.set('latest_tweet', latest_tweet, settings.TWITTER_TIMEOUT)
     if request.is_ajax():
         template = page_template
     template_dict = {"search_results": search_results, "page_template": page_template}
     if extra_context:
         template_dict.update({'extra_context': extra_context})
-    return render(request, template, template_dict)
+
+    return render_to_response(template, template_dict, context_instance=RequestContext(request))
 
 
 # Create your views here.

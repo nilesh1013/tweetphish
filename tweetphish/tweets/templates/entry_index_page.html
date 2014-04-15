@@ -10,10 +10,10 @@
         <!--list: {{ tweet.lists }}-->
         <!--reply: {{ tweet.reply }}s-->
         <!--tags: {{ tweet.tags }}-->
-        {% for url in tweet.urls %}
+<!--         {% for url in tweet.urls %}
             <div class={% if url|check_phish %}"phishurl"{% else %}"goodurl"{% endif %}>{{ url|short_to_long }}</div>
         {% endfor %}
-        <!--users: {{ tweet.users }}<br><br>-->
+ -->        <!--users: {{ tweet.users }}<br><br>-->
     </div>
 {% endfor %}
 {% show_more %}
