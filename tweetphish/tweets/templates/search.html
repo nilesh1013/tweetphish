@@ -1,11 +1,14 @@
 {% extends "base.html" %}
+{% load compress %}
 
 {% block content %}
     {% include page_template %}
     {% block js %}
     {{ block.super }}
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <script src="{{ STATIC_URL }}endless_pagination/js/endless-pagination.js"></script>
+    {% compress js %}
+	    <script src="/static/js/jquery-latest.js"></script>
+	    <script src="{{ STATIC_URL }}endless_pagination/js/endless-pagination.js"></script>
+	{% endcompress %}
     <script>$.endlessPaginate();</script>
     {% endblock %}
 {% endblock %}
