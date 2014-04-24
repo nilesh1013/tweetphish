@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'endless_pagination',
-    'tweets'
+    'tweets',
+    'compressor'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,6 +88,8 @@ USE_TZ = True
 #STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 STATIC_ROOT = ''
+COMPRESS_ROOT = os.path.join(BASE_DIR, "static/")
+COMPRESS_ENABLED = True
 
 STATIC_URL = '/static/'
 
