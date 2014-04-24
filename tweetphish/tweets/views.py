@@ -15,34 +15,44 @@ def search(request, template = "search.html", extra_context=None):
     """
     query_param = request.GET.get('query')
     user_name = request.GET.get('user')
-    parser = Parser()
-    search_results = []
-
-    twitter = Twython(settings.TWITTER_CONSUMER_KEY,
-                      settings.TWITTER_CONSUMER_SECRET,
-                      settings.TWITTER_OAUTH_TOKEN,
-                      settings.TWITTER_OAUTH_TOKEN_SECRET)
-    if query_param:
-        try:
-            search_tweets = twitter.search(q=query_param, lang="en", count="30")
-        except TwythonError as e:
-            return {"exception happened :)": e}
-        else:
-            for tweet in search_tweets['statuses']:
-                search_results.append(parser.parse(tweet['text']))
-    elif user_name:
-        try:
-            search_tweets = twitter.get_user_timeline(screen_name=user_name , count="30", exclude_replies=True)
-        except TwythonError as e:
-            return {"exception happened :)": e}
-        else:
-            for tweet in search_tweets:
-                try:
-                    search_results.append(parser.parse(tweet['text']))
-                except:
-                    pass
+    cache_name = None
     page_template= "entry_index_page.html"
-    #cache.set('latest_tweet', latest_tweet, settings.TWITTER_TIMEOUT)
+
+    if query_param:
+        cache_name = "search_results_%s" % query_param
+    elif user_name:
+        cache_name = "search_results_%s" % user_name
+
+    search_results = cache.get(cache_name)
+    if not search_results:
+        parser = Parser()
+        search_results = []
+
+        twitter = Twython(settings.TWITTER_CONSUMER_KEY,
+                          settings.TWITTER_CONSUMER_SECRET,
+                          settings.TWITTER_OAUTH_TOKEN,
+                          settings.TWITTER_OAUTH_TOKEN_SECRET)
+        if query_param:
+            try:
+                search_tweets = twitter.search(q=query_param, lang="en", count="100")
+            except TwythonError as e:
+                return {"exception happened :)": e}
+            else:
+                for tweet in search_tweets['statuses']:
+                    search_results.append(parser.parse(tweet['text']))
+        elif user_name:
+            try:
+                search_tweets = twitter.get_user_timeline(screen_name=user_name , count="100", exclude_replies=True)
+            except TwythonError as e:
+                return {"exception happened :)": e}
+            else:
+                for tweet in search_tweets:
+                    try:
+                        search_results.append(parser.parse(tweet['text']))
+                    except:
+                        pass
+        cache.set(cache_name, search_results, settings.TWITTER_TIMEOUT)
+
     if request.is_ajax():
         template = page_template
     template_dict = {"search_results": search_results, "page_template": page_template}
