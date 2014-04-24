@@ -4,7 +4,7 @@
     {% include page_template %}
     {% block js %}
     {{ block.super }}
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/jquery-latest.js"></script>
     <script src="{{ STATIC_URL }}endless_pagination/js/endless-pagination.js"></script>
     <script>$.endlessPaginate();</script>
     {% endblock %}

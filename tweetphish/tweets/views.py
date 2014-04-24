@@ -39,7 +39,10 @@ def search(request, template = "search.html", extra_context=None):
                 return {"exception happened :)": e}
             else:
                 for tweet in search_tweets['statuses']:
-                    search_results.append(parser.parse(tweet['text']))
+                    try:
+                        search_results.append(parser.parse(tweet['text']))
+                    except:
+                        pass
         elif user_name:
             try:
                 search_tweets = twitter.get_user_timeline(screen_name=user_name , count="100", exclude_replies=True)

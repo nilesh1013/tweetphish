@@ -3,7 +3,7 @@
 {% load check_phish %}
 {% load short_to_long %}
 
-{% paginate search_results %}
+{% lazy_paginate search_results %}
 {% for tweet in search_results %}
     <div class={% if tweet.urls %}"tweet"{% else %}"urltweet"{% endif %}>
         {% autoescape off %}{{ tweet.html }}{% endautoescape %}<br><br>
