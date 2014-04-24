@@ -104,6 +104,12 @@ TWITTER_CONSUMER_SECRET = "RfmtPbHSBJvgC6dMTgxLmbDmR13KlMlDe5zLyNs"
 TWITTER_OAUTH_TOKEN = "356735341-IJsaQyXjUih5nawaTMpz2FhqYtzHsdhsrRtbIKSn"
 TWITTER_OAUTH_TOKEN_SECRET = "atrn6kUIwc31LqsUPmhrMCquYCIAKB6BAG9OVgzdCp549"
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
 TWITTER_TIMEOUT = 600
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
