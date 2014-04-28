@@ -92,14 +92,8 @@ def check_phish(original_url):
 
         if not phish_url:
             phish_url = False
-            phish_url_exist = False
-        else:
-            phish_url_exist = True
 
         cache.set(original_url, phish_url, 86400)
-        return phish_url_exist
+        return phish_url
     else:
-        if phish_url:
-            return True
-        else:
-            return False
+        return phish_url
