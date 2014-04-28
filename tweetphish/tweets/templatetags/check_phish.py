@@ -1,4 +1,5 @@
 from django import template
+from django.core.cache import cache
 from urlparse import urlparse
 import requests
 import json
@@ -27,63 +28,78 @@ GOOGLE_SAFE_BROWSING_KEY = 'ABQIAAAA_BMMl3XOHEx1HS2JGl_VDxQ_VGe9tIQpsNOPN3slh1Yt
 GOOGLE_SAFE_BROWSING_URL = 'https://sb-ssl.google.com/safebrowsing/api/lookup?client=api&apikey=%s&appver=1.0&pver=3.0&url=%s'
 
 @register.filter(name="check_phish")
-def check_phish(url):
+def check_phish(original_url):
     """
     checking url is phishing or not
     """
-    long_url_json = requests.get('http://api.longurl.org/v2/expand?url=%s&format=json' % url)
+    phish_url = cache.get(original_url)
 
-    try:
-        json_data = json.loads(long_url_json.content)
-        url = json_data['long-url']
-    except:
-        pass
-
-    phish_url = None
-
-    try:
-        phishtank_api = phishtank.Phishtank()
-        phish_url = phishtank_api.check(url).unsafe
-    except:
-        pass
-
-    if phish_url:
-        phish_url = 'Phishtank detection'
-    else:
-        mywot_result = requests.get(MYWOT_API_URL % (url, MYWOT_API_KEY))
+    if phish_url is None:
+        url = original_url
+        long_url_json = requests.get('http://api.longurl.org/v2/expand?url=%s&format=json' % original_url)
 
         try:
-            json_data = json.loads(mywot_result.content)
+            json_data = json.loads(long_url_json.content)
+            url = json_data['long-url']
         except:
             pass
+
+        phish_url = None
+
+        try:
+            phishtank_api = phishtank.Phishtank()
+            phish_url = phishtank_api.check(url).unsafe
+        except:
+            pass
+
+        if phish_url:
+            phish_url = 'Phishtank detection'
         else:
+            mywot_result = requests.get(MYWOT_API_URL % (url, MYWOT_API_KEY))
+
             try:
-                url_netloc = urlparse(url).netloc
-                url_data = json_data[url_netloc]
+                json_data = json.loads(mywot_result.content)
             except:
                 pass
             else:
-                if "blacklists" in url_data:
-                    phish_url="MyWot detection"
+                try:
+                    url_netloc = urlparse(url).netloc
+                    url_data = json_data[url_netloc]
+                except:
+                    pass
                 else:
-                    try:
-                        url_code_category = url_data['categories'].keys()
-                    except (KeyError, AttributeError):
-                        pass
+                    if "blacklists" in url_data:
+                        phish_url="MyWot detection"
                     else:
-                        for category_code in url_code_category:
-                            if category_code in MYWOT_CATEGORIES:
-                                phish_url = "MyWot detection"
-                                break
+                        try:
+                            url_code_category = url_data['categories'].keys()
+                        except (KeyError, AttributeError):
+                            pass
+                        else:
+                            for category_code in url_code_category:
+                                if category_code in MYWOT_CATEGORIES:
+                                    phish_url = "MyWot detection"
+                                    break
 
-    if not phish_url:
-        try:
-            google_safe_result = requests.get(GOOGLE_SAFE_BROWSING_URL % (GOOGLE_SAFE_BROWSING_KEY, url)).text
-        except:
-            google_safe_result = None
+        if not phish_url:
+            try:
+                google_safe_result = requests.get(GOOGLE_SAFE_BROWSING_URL % (GOOGLE_SAFE_BROWSING_KEY, url)).text
+            except:
+                google_safe_result = None
 
-        if google_safe_result in ('malware', 'phishing'):
-            phish_url = 'googlesafebrowsing detection'
+            if google_safe_result in ('malware', 'phishing'):
+                phish_url = 'googlesafebrowsing detection'
 
-    if phish_url:
-        return True
+        if not phish_url:
+            phish_url = False
+            phish_url_exist = False
+        else:
+            phish_url_exist = True
+
+        cache.set(original_url, phish_url, 86400)
+        return phish_url_exist
+    else:
+        if phish_url:
+            return True
+        else:
+            return False
