@@ -5,6 +5,7 @@ from django.template import RequestContext
 
 from twython import Twython, TwythonError
 from tweetphish.utils.twitter_parser import Parser
+from tweets.models import TweetUrls
 from endless_pagination.decorators import page_template
 
 @page_template('entry_index_page.html')
@@ -55,6 +56,17 @@ def search(request, template = "search.html", extra_context=None):
                     except:
                         pass
         cache.set(cache_name, search_results, settings.TWITTER_TIMEOUT)
+
+    for result in search_results:
+        for url in result.urls:
+            try:
+                TweetUrls.objects.get(url=url)
+            except TweetUrls.DoesNotExist:
+                tweet_users = ("|").join(result.users)
+                tweet_tags = ("|").join(result.tags)
+                TweetUrls.objects.create(url=url,users=tweet_users, tags=tweet_tags )
+            else:
+                pass
 
     if request.is_ajax():
         template = page_template
