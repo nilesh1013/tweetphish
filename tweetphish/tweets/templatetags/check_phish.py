@@ -1,9 +1,12 @@
-from django import template
-from django.core.cache import cache
 from urlparse import urlparse
 import requests
 import json
 import phishtank
+
+from django import template
+from django.core.cache import cache
+
+from tweets.models import TweetUrls
 
 register = template.Library()
 
@@ -35,27 +38,53 @@ def check_phish(original_url):
     phish_url = cache.get(original_url)
 
     if phish_url is None:
-        url = original_url
-        phish_url = None
+        #trying to get phish_url from database, if that value if already there
+        try:
+            url_model_data = TweetUrls.objects.get(url=original_url)
+        except TweetUrls.DoesNotExist:
+            pass
+        else:
+            phish_url = url_model_data.phish_url
 
-        if long_url(original_url):
-            url = long_url(original_url)
+        if phish_url is None:
+            url = original_url
+            phish_url = None
 
-        phish_url = check_phish_url(url)
+            if long_url(original_url):
+                url = long_url(original_url)
 
-        if not phish_url:
-            phish_url = check_mywot_url(url)
+            phish_url = check_phish_url(url)
 
-        if not phish_url:
-            phish_url = check_google_safe_browsing(url)
+            if not phish_url:
+                phish_url = check_mywot_url(url)
 
-        if not phish_url:
-            phish_url = False
+            if not phish_url:
+                phish_url = check_google_safe_browsing(url)
 
-        cache.set(original_url, phish_url, 86400)
-        return phish_url
-    else:
-        return phish_url
+            if not phish_url:
+                phish_url = False
+
+            cache.set(original_url, phish_url, 86400)
+
+            phish_url_field_value = True if phish_url else False
+            which_phish_field_value = phish_url if phish_url else ''
+
+            data_update = {
+                'which_phish': which_phish_field_value,
+                'phish_url': phish_url_field_value,
+                'full_url': url
+            }
+
+            try:
+                user_models = TweetUrls.objects.get(url=original_url)
+            except TweetUrls.DoesNotExist:
+                user_models = TweetUrls.objects.create(url=original_url)
+
+            if user_models:
+                user_models.__dict__.update(data_update)
+                user_models.save()
+
+    return phish_url
 
 
 def long_url(original_url):
@@ -67,7 +96,7 @@ def long_url(original_url):
         url = json_data['long-url']
     except:
         pass
-
+    print 'long_url', url
     return url
 
 

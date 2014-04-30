@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'endless_pagination',
     'tweets',
-    'compressor'
+    'compressor',
+    'south'
 )
 
 MIDDLEWARE_CLASSES = (

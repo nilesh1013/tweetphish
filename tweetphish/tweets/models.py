@@ -8,3 +8,5 @@ class TweetUrls(models.Model):
     tags = models.TextField(blank=True, null=True)
     which_phish = models.CharField(blank=True, null=True, max_length=100)
     full_url = models.URLField(max_length=2000, blank=True, null=True)
+    query_keyword = models.CharField(max_length=100, blank=True, null=True)
+    user_keyword = models.CharField(max_length=100, blank=True, null=True)

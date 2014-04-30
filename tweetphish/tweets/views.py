@@ -64,7 +64,10 @@ def search(request, template = "search.html", extra_context=None):
             except TweetUrls.DoesNotExist:
                 tweet_users = ("|").join(result.users)
                 tweet_tags = ("|").join(result.tags)
-                TweetUrls.objects.create(url=url,users=tweet_users, tags=tweet_tags )
+                TweetUrls.objects.create(
+                    url=url,users=tweet_users,
+                    tags=tweet_tags, query_keyword=query_param,
+                    user_keyword=user_name )
             else:
                 pass
 
