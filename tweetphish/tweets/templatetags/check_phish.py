@@ -65,7 +65,6 @@ def check_phish(original_url):
                 phish_url = False
 
             cache.set(original_url, phish_url, 86400)
-
             phish_url_field_value = True if phish_url else False
             which_phish_field_value = phish_url if phish_url else ''
 
@@ -96,7 +95,7 @@ def long_url(original_url):
         url = json_data['long-url']
     except:
         pass
-    print 'long_url', url
+
     return url
 
 
