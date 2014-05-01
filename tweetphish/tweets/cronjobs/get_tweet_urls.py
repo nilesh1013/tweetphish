@@ -28,7 +28,7 @@ def run():
                       settings.TWITTER_CONSUMER_SECRET,
                       settings.TWITTER_OAUTH_TOKEN,
                       settings.TWITTER_OAUTH_TOKEN_SECRET)
-    for query_param in words[101:200]:
+    for query_param in words[0:100]:
         print query_param
         try:
             search_tweets = twitter.search(q=query_param, lang="en", count="100")
