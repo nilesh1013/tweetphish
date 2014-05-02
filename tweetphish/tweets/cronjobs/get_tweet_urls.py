@@ -11,7 +11,7 @@ def run():
         Gets latest tweet from the Twitter user specified in settings.
         Caches latest tweet for 10 minutes to reduce API calls
     """
-    file_words = open('/Users/nileshsharma/webapps/django-tweets/tweetphish/corpora.txt')
+    file_words = open('/Users/nileshsharma/webapps/django-tweets/tweetphish/tweets/big_corpora.txt')
     with file_words as f:
         words = f.read().split(',')
     try:
@@ -28,7 +28,7 @@ def run():
                       settings.TWITTER_CONSUMER_SECRET,
                       settings.TWITTER_OAUTH_TOKEN,
                       settings.TWITTER_OAUTH_TOKEN_SECRET)
-    for query_param in words[0:400]:
+    for query_param in words:
         print query_param
         try:
             search_tweets = twitter.search(q=query_param, lang="en", count="100")
