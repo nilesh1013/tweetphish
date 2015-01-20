@@ -1,4 +1,4 @@
 TweetPhish
 ==========
 
-A project for checking phishing urls on twitter tweets
+A Python Django project for checking phishing urls on twitter tweets
